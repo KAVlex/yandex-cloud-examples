@@ -1,7 +1,7 @@
 #!/usr/bin/expect -f
 
 set timeout -1
-spawn sudo dpkg -i debian11_yenisei_1.1.0-599_amd64.deb
+spawn sudo dpkg -i /tmp/debian11_yenisei_1.1.0-599_amd64.deb
 
 expect "Server admin name: "
 send -- "admin\r"
