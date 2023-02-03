@@ -26,7 +26,7 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "../yns/install.exp",
+      "source": "./jenkins-packer/yns/install.exp",
       "destination": "/tmp/install.exp"
     },
     {
