@@ -1,0 +1,15 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+spawn sudo dpkg -i debian11_yenisei_1.1.0-599_amd64.deb
+
+expect "Server admin name: "
+send -- "admin\r"
+
+expect "Server admin password: "
+send -- "password\r"
+
+expect "Server cookie (empty for auto generate): "
+send -- "test\r"
+
+expect eof

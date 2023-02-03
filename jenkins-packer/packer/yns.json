@@ -1,0 +1,58 @@
+{
+  "variables": {
+     "service_account_key_file": "{{env `YC_ACCOUNT_KEY_FILE`}}",
+     "folder_id": "{{env `YC_FOLDER_ID`}}",
+     "subnet_id": "{{env `YC_SUBNET_ID`}}"
+  },
+  "builders": [
+    {
+      "type":      "yandex",
+      "service_account_key_file" :  "{{user `service_account_key_file`}}",
+      "folder_id": "{{user `folder_id`}}",
+      "subnet_id": "{{user `subnet_id`}}",
+      "zone":      "ru-central1-b",
+
+      "image_name":   "debian-11-yns-{{isotime | clean_resource_name}}",
+      "image_family": "debian-11-yns",
+      "image_description": "Yns debian build",
+
+      "source_image_family": "debian-11",
+      "disk_type":           "network-nvme",
+      "ssh_username":        "debian",
+
+      "use_ipv4_nat": true
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "../yns/install.exp",
+      "destination": "/tmp/install.exp"
+    },
+    {
+      "type": "file",
+      "source": "/tmp/debian11_yenisei_1.1.0-599_amd64.deb",
+      "destination": "/tmp/debian11_yenisei_1.1.0-599_amd64.deb"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "echo 'kernel update'",
+        "until ping -c1 mirror.yandex.ru &>/dev/null; do :; done",
+        "sudo apt-get update -y",
+        "sleep 10",
+        "echo changed",
+	    "export DEBIAN_FRONTEND=noninteractive",
+        "sudo apt install libmozjs-78-0",
+        "sudo apt install expect -y",
+        "sudo chmod +x /tmp/install.exp",
+        "sudo /tmp/install.exp",
+        "echo installed",
+        "sleep 10",
+        "curl -X POST -H \"Content-Type: application/json\" http://admin:password@127.0.0.1:5984/_cluster_setup -d '{\"action\": \"enable_single_node\", \"bind_address\":\"0.0.0.0\", \"username\": \"admin\", \"password\":\"password\", \"singlenode\": true, \"port\": 5984}'",
+        "echo setup finished"
+      ]
+    }
+  ]
+}
+

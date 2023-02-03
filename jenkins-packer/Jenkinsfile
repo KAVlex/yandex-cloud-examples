@@ -10,19 +10,7 @@ pipeline {
     stages {
         stage('Core') {
             steps {
-                sh label: '', script: "${env.PACKER_SH} ./jenkins-packer/packer/base.json"
-            }
-        }
-        stage('Role-Based') {
-            steps {
-                parallel(
-                    nginx: {
-                        sh label: '', script: "${env.PACKER_SH} ./jenkins-packer/packer/nginx.json"
-                    },
-                    django: {
-                        sh label: '', script: "${env.PACKER_SH} ./jenkins-packer/packer/django.json" 
-                    }
-                )
+                sh label: '', script: "${env.PACKER_SH} ./jenkins-packer/packer/yns.json"
             }
         }
     }
